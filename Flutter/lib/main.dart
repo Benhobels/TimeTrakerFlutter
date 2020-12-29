@@ -1,7 +1,5 @@
-import 'package:codecolab_timetracker/PageIntervals.dart';
-import 'package:codecolab_timetracker/page_activities.dart';
 import 'package:flutter/material.dart';
-
+import 'package:codecolab_timetracker/page_activities.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,7 +14,7 @@ class MyApp extends StatelessWidget {
             subhead: TextStyle(fontSize:20.0),
             body1:TextStyle(fontSize:20.0)),
       ),
-      home: PageActivities(0) //PageIntervals()
-      );
+      home: PageActivities(0),
+    );
   }
 }

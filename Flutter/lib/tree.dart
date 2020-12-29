@@ -14,8 +14,8 @@ abstract class Activity {
   Activity.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
-        initialDate = json['initialDate']==null ? null : _dateFormatter.parse(json['initialDate']),
-        finalDate = json['finalDate']==null ? null : _dateFormatter.parse(json['finalDate']),
+        initialDate = json['initialDate']=="null" ? null : _dateFormatter.parse(json['initialDate']),
+        finalDate = json['finalDate']=="null" ? null : _dateFormatter.parse(json['finalDate']),
         duration = json['duration'];
 }
 
@@ -25,10 +25,10 @@ class Project extends Activity {
     if (json.containsKey('activities')) {
       // json has only 1 level because depth=1 or 0 in time_tracker
       for (Map<String, dynamic> jsonChild in json['activities']) {
-        if (jsonChild['class'] == "project") {
+        if (jsonChild['class'] == "Project") {
           children.add(Project.fromJson(jsonChild));
           // condition on key avoids infinite recursion
-        } else if (jsonChild['class'] == "task") {
+        } else if (jsonChild['class'] == "Task") {
           children.add(Task.fromJson(jsonChild));
         } else {
           assert(false);
@@ -43,8 +43,10 @@ class Task extends Activity {
   bool active;
   Task.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     active = json['active'];
-    for (Map<String, dynamic> jsonChild in json['intervals']) {
-      children.add(Interval.fromJson(jsonChild));
+    if (json.containsKey('activities')) {
+      for (Map<String, dynamic> jsonChild in json['activities']) {
+        children.add(Interval.fromJson(jsonChild));
+      }
     }
   }
 }
@@ -59,8 +61,8 @@ class Interval {
 
   Interval.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        initialDate = json['initialDate']==null ? null : _dateFormatter.parse(json['initialDate']),
-        finalDate = json['finalDate']==null ? null : _dateFormatter.parse(json['finalDate']),
+        initialDate = json['initialDate']=="null" ? null : _dateFormatter.parse(json['initialDate']),
+        finalDate = json['finalDate']=="null" ? null : _dateFormatter.parse(json['finalDate']),
         duration = json['duration'],
         active = json['active'];
 }
@@ -72,9 +74,9 @@ class Tree {
   Tree(Map<String, dynamic> dec) {
     // 1 level tree, root and children only, root is either Project or Task. If Project
     // children are Project or Task, that is, Activity. If root is Task, children are Instance.
-    if (dec['class'] == "project") {
+    if (dec['class'] == "Project") {
       root = Project.fromJson(dec);
-    } else if (dec['class'] == "task") {
+    } else if (dec['class'] == "Task") {
       root = Task.fromJson(dec);
     } else {
       assert(false);
